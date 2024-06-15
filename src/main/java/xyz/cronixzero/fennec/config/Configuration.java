@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.config;
+package xyz.cronixzero.fennec.config;
 
 import java.net.InetAddress;
 import java.time.Duration;

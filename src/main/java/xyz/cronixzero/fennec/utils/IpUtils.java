@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.utils;
+package xyz.cronixzero.fennec.utils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

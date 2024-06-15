@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.scheduler;
+package xyz.cronixzero.fennec.scheduler;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;

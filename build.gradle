@@ -10,7 +10,7 @@ group = 'xyz.cronixzero'
 version = '1.0-SNAPSHOT'
 
 application {
-    mainClass = 'xyz.cronixzero.dockeripcheck.DockerIpCheck'
+    mainClass = 'xyz.cronixzero.fennec.Fennec'
 }
 repositories {
     mavenCentral()

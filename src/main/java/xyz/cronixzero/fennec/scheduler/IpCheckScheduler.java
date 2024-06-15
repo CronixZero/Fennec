@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.scheduler;
+package xyz.cronixzero.fennec.scheduler;
 
 import com.github.dockerjava.api.model.Container;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -8,10 +8,10 @@ import java.net.UnknownHostException;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import xyz.cronixzero.dockeripcheck.config.Configuration;
-import xyz.cronixzero.dockeripcheck.notifications.Notifier;
-import xyz.cronixzero.dockeripcheck.services.DockerService;
-import xyz.cronixzero.dockeripcheck.utils.Ansi;
+import xyz.cronixzero.fennec.config.Configuration;
+import xyz.cronixzero.fennec.notifications.Notifier;
+import xyz.cronixzero.fennec.services.DockerService;
+import xyz.cronixzero.fennec.utils.Ansi;
 
 @Slf4j
 public class IpCheckScheduler extends AbstractScheduledService {

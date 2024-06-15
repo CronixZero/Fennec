@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.config;
+package xyz.cronixzero.fennec.config;
 
 import com.google.common.base.MoreObjects;
 import java.net.InetAddress;

@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.services;
+package xyz.cronixzero.fennec.services;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback.Adapter;
@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import io.reactivex.rxjava3.core.Observable;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import xyz.cronixzero.dockeripcheck.notifications.Notifier;
+import xyz.cronixzero.fennec.notifications.Notifier;
 
 @Slf4j
 public class DockerService {

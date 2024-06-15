@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.services;
+package xyz.cronixzero.fennec.services;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;

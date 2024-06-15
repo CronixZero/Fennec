@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.utils;
+package xyz.cronixzero.fennec.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

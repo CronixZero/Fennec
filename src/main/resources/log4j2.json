@@ -1,8 +1,8 @@
 {
   "configuration": {
     "status": "info",
-    "name": "IpCheck",
-    "packages": "xyz.cronixzero.dockerIpCheck",
+    "name": "Fennec",
+    "packages": "xyz.cronixzero.fennec",
     "ThresholdFilter": {
       "level": "info"
     },

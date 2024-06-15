@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.notifications;
+package xyz.cronixzero.fennec.notifications;
 
 import com.github.dockerjava.api.model.Container;
 import java.util.List;

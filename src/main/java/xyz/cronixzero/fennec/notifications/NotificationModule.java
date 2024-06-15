@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.notifications;
+package xyz.cronixzero.fennec.notifications;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -6,7 +6,6 @@ import gg.jte.CodeResolver;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.DirectoryCodeResolver;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,9 @@ import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
-import xyz.cronixzero.dockeripcheck.annotations.HtmlTemplateEngine;
-import xyz.cronixzero.dockeripcheck.annotations.PlaintextTemplateEngine;
-import xyz.cronixzero.dockeripcheck.config.Configuration;
+import xyz.cronixzero.fennec.annotations.HtmlTemplateEngine;
+import xyz.cronixzero.fennec.annotations.PlaintextTemplateEngine;
+import xyz.cronixzero.fennec.config.Configuration;
 
 public class NotificationModule implements Module {
 

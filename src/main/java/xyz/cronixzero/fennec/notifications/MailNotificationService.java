@@ -1,4 +1,4 @@
-package xyz.cronixzero.dockeripcheck.notifications;
+package xyz.cronixzero.fennec.notifications;
 
 import com.github.dockerjava.api.model.Container;
 import com.google.inject.Inject;
@@ -15,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.email.EmailBuilder;
-import xyz.cronixzero.dockeripcheck.annotations.HtmlTemplateEngine;
-import xyz.cronixzero.dockeripcheck.annotations.PlaintextTemplateEngine;
+import xyz.cronixzero.fennec.annotations.HtmlTemplateEngine;
+import xyz.cronixzero.fennec.annotations.PlaintextTemplateEngine;
 
 @Slf4j
 public class MailNotificationService implements NotificationService {
