@@ -10,6 +10,10 @@ You can even configure Fennec to automatically stop or kill the container in que
 Currently, you'll need to build the Docker Image yourself!
 Fennec needs access to the Docker Socket to check the Containers for IP Leaks.
 
+Use ``gradle dockerCreateDockerfile`` to create a Dockerfile
+
+Use ``docker build build/docker -t fennec:latest`` to build the Docker Image
+
 
 ---
 
