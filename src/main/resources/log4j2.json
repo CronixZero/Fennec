@@ -1,0 +1,27 @@
+{
+  "configuration": {
+    "status": "info",
+    "name": "IpCheck",
+    "packages": "xyz.cronixzero.dockerIpCheck",
+    "ThresholdFilter": {
+      "level": "info"
+    },
+    "appenders": {
+      "Console": {
+        "name": "STDOUT",
+        "PatternLayout": {
+          "disableAnsi": false,
+          "pattern": "%highlight{[%d{HH:mm:ss}] [%t/%level]}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=cyan, DEBUG=green bold, TRACE=magenta}: %msg%n"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "info",
+        "AppenderRef": {
+          "ref": "STDOUT"
+        }
+      }
+    }
+  }
+}

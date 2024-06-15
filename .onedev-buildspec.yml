@@ -1,0 +1,208 @@
+version: 25
+jobs:
+- name: Gradle CI
+  steps:
+  - !CheckoutStep
+    name: checkout
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: detect build version
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading gradle dependencies)..."
+      - 'echo $(gradle properties | grep ^version: | grep -v unspecified | cut -c10-) > buildVersion'
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: set build version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run gradle build
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - gradle build
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish Artifacts
+    artifacts: build/libs/**
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish Distribution Artifacts
+    artifacts: /build/distributions/**
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !PullRequestMergeTrigger {}
+  - !TagCreateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  caches:
+  - key: gradle-cache
+    path: /home/gradle/.gradle
+  timeout: 3600
+- name: Lint
+  steps:
+  - !CheckoutStep
+    name: Checkout Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    checkoutPath: /data/project
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !RunContainerStep
+    name: Qodana
+    image: jetbrains/qodana-jvm-community
+    args: --fail-threshold 0 --save-report --report-dir=/data/results/report
+    volumeMounts:
+    - sourcePath: /data/project/
+      targetPath: /data/project/
+    - sourcePath: /data/results/
+      targetPath: /data/results/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish Artifacts
+    sourcePath: /data/results
+    artifacts: '**'
+    condition: ALWAYS
+  triggers:
+  - !DependencyFinishedTrigger {}
+  jobDependencies:
+  - jobName: Gradle CI
+    requireSuccessful: true
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+  postBuildActions:
+  - !CreateIssueAction
+    condition: failed or  timed out
+    issueTitle: '@branch@ Build failing (Build @build_number@)'
+    issueDescription: "Qodana Analysis of @branch@ for job @job_name@ failed\r\n\r\nBuild Version\r\n@build_version@"
+    issueConfidential: false
+    issueFields:
+    - name: Type
+      secret: false
+      valueProvider: !SpecifiedValue
+        value:
+        - Build Failure
+    - name: Priority
+      secret: false
+      valueProvider: !SpecifiedValue
+        value:
+        - Normal
+    - name: Assignees
+      secret: false
+      valueProvider: !ScriptingValue
+        scriptName: builtin:determine-build-failure-investigator
+    - name: Failed Build
+      secret: false
+      valueProvider: !ScriptingValue
+        scriptName: builtin:get-build-number
+- name: Docker Image
+  steps:
+  - !CheckoutStep
+    name: Checkout Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Determine Build Version
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading gradle dependencies)..."
+      - 'echo $(gradle properties | grep ^version: | grep -v unspecified | cut -c10-) > buildVersion'
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Build Dockerfile
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - gradle dockerCreateDockerfile
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !BuildImageStep
+    name: Build Image
+    buildPath: build/docker/
+    tags: xyz.cronixzero/docker-service-ip-checker:@tag@ xyz.cronixzero/docker-service-ip-checker:latest xyz.cronixzero/docker-service-ip-checker:stable
+    publish: false
+    removeDanglingImages: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger
+    branches: master main
+  jobDependencies:
+  - jobName: Gradle CI
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Docker Image Snapshot
+  steps:
+  - !CheckoutStep
+    name: Checkout Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Determine Build Version
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading gradle dependencies)..."
+      - 'echo $(gradle properties | grep ^version: | grep -v unspecified | cut -c10-) > buildVersion'
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Build Dockerfile
+    runInContainer: true
+    image: '@script:builtin:gradle:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - gradle dockerCreateDockerfile
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !BuildImageStep
+    name: Build Image
+    buildPath: build/docker/
+    tags: xyz.cronixzero/docker-service-ip-checker:SNAPSHOT-@build_number@ xyz.cronixzero/docker-service-ip-checker:latest
+    publish: false
+    removeDanglingImages: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !DependencyFinishedTrigger {}
+  jobDependencies:
+  - jobName: Gradle CI
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
